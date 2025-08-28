@@ -38,7 +38,7 @@ services:
       KC_HEALTH_ENABLED: "true"
       KC_LOG_LEVEL: ${KC_LOG_LEVEL:-info}
       KC_CACHE: local
-    command: ["start"]
+    command: ["start", "--optimized"]
     restart: unless-stopped
     networks:
       - internal
