@@ -41,8 +41,8 @@ if [ "$FIRST_RUN" = true ]; then
     echo -e "${YELLOW}Waiting for initial setup to complete...${NC}"
     echo "This may take a few minutes on first run."
     
-    # Wait for Keycloak to be healthy
-    until docker exec keycloak /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password admin 2>/dev/null || [ $? -eq 1 ]; do
+    # Wait for Keycloak to be ready by checking the health endpoint
+    until docker exec keycloak curl -sf http://localhost:8080/health/ready >/dev/null 2>&1; do
         echo -n "."
         sleep 5
     done
