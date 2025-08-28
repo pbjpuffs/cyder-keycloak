@@ -24,20 +24,21 @@ services:
       db:
         condition: service_healthy
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-keycloak}
       KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
-      KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_HOSTNAME_STRICT: "true"
-      KC_HOSTNAME_STRICT_HTTPS: "true"
       KC_METRICS_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"
       KC_LOG_LEVEL: ${KC_LOG_LEVEL:-info}
-    command: ["start"]
+      KC_CACHE: local
+    command: ["start", "--optimized"]
     restart: unless-stopped
     networks:
       - internal
