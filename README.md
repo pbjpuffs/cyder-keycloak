@@ -16,6 +16,20 @@ cp env.example .env
 
 Set `KC_HOSTNAME` to your public domain (e.g. `auth.example.com`).
 
+### Quick Start - Management Scripts
+
+The following scripts are provided for easy system management:
+
+- `./start.sh` - Start the production system (handles first-run setup automatically)
+- `./stop.sh` - Stop all services gracefully
+- `./restart.sh` - Restart all services
+- `./status.sh` - Check system status and health
+- `./logs.sh [service] [-f]` - View logs (all, keycloak, db, or nginx)
+- `./start-dev.sh` - Start development environment
+- `./build-optimized.sh` - Build an optimized Keycloak image for faster startups
+
+**Note:** On Windows, run these scripts using Git Bash, WSL, or prefix with `bash`.
+
 ### Development
 - Runs Keycloak + Postgres only
 - Access: `http://localhost:8080`
@@ -57,7 +71,9 @@ docker compose -f docker-compose.prod.yml down
 ```
 
 ### Notes
-- Nginx is configured with `X-Forwarded-*` headers; Keycloak runs with `KC_PROXY=edge` and strict HTTPS hostname enforcement.
+- Nginx is configured with `X-Forwarded-*` headers; Keycloak uses `KC_PROXY_HEADERS=xforwarded` for proper proxy handling.
+- Keycloak 26 uses new hostname v2 configuration with `KC_HOSTNAME_STRICT=true` for security.
+- Environment variables use new names: `KC_BOOTSTRAP_ADMIN_USERNAME` and `KC_BOOTSTRAP_ADMIN_PASSWORD`.
 - Ensure your Cloudflare DNS record for `KC_HOSTNAME` is proxied (orange cloud).
 - If you rotate the origin cert, replace the files and reload Nginx by restarting the container.
 
