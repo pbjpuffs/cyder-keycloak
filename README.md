@@ -37,10 +37,12 @@ Architecture: Cloudflare ➜ Nginx (TLS termination with origin cert) ➜ Keyclo
 
 1) Generate a Cloudflare Origin Certificate for your domain in the Cloudflare dashboard and download the certificate and private key.
 2) Place files on the host:
-   - Certificate: `nginx/certs/origin.crt`
-   - Private key: `nginx/certs/origin.key`
+   - Certificate: `nginx/certs/origin-cert.pem`
+   - Private key: `nginx/certs/origin-key.pem`
 3) Ensure `.env` has your `KC_HOSTNAME` set to the public domain (proxied by Cloudflare). Example: `KC_HOSTNAME=auth.example.com`.
-4) Start services:
+4) First run only: the Keycloak image should start without the `--optimized` flag (already configured). If you later customize the config and want pre-optimized startup, build the server inside the container using `kc.sh build` and then you can use `--optimized`.
+
+5) Start services:
 
 ```
 docker compose -f docker-compose.prod.yml up -d
