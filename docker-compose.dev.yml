@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: keycloak-db-dev
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-keycloak}
+      POSTGRES_USER: ${POSTGRES_USER:-keycloak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-keycloak}
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - keycloak-dev
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KC_VERSION:-26.0}
+    container_name: keycloak-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-keycloak}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: ${KC_HOSTNAME_DEV:-localhost}
+      KC_METRICS_ENABLED: "true"
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL:-info}
+    command: start-dev
+    ports:
+      - "8080:8080"
+    networks:
+      - keycloak-dev
+
+volumes:
+  db_data_dev:
+
+networks:
+  keycloak-dev:
+    driver: bridge
+
+
